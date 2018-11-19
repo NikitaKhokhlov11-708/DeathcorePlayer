@@ -13,6 +13,7 @@ import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PersistableBundle;
 import android.provider.MediaStore;
@@ -20,7 +21,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -28,7 +28,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -43,17 +42,30 @@ public class MainActivity extends AppCompatActivity {
 
     public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
     public static final String Broadcast_PLAY_NEW_AUDIO = "com.example.nikita.deathcoreplayer.PlayNewAudio";
-
-    private MediaPlayerService player;
     boolean serviceBound = false;
     ArrayList<Audio> audioList;
-
     ImageView collapsingImageView;
-
     int imageIndex = 0;
+    private MediaPlayerService player;
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            MediaPlayerService.LocalBinder binder = (MediaPlayerService.LocalBinder) service;
+            player = binder.getService();
+            serviceBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            serviceBound = false;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Intent intent = getIntent();
+        int theme = intent.getIntExtra("THEME", -1);
+        setTheme(theme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -146,8 +158,7 @@ public class MainActivity extends AppCompatActivity {
                                             }
                                         }
                                     });
-                        }
-                        else {
+                        } else {
                             Toast.makeText(this, "Go to settings and enable permissions", Toast.LENGTH_LONG)
                                     .show();
                         }
@@ -166,7 +177,6 @@ public class MainActivity extends AppCompatActivity {
                 .create()
                 .show();
     }
-
 
     private void initRecyclerView() {
         if (audioList != null && audioList.size() > 0) {
@@ -205,7 +215,6 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
         super.onSaveInstanceState(outState, outPersistentState);
@@ -217,21 +226,6 @@ public class MainActivity extends AppCompatActivity {
         super.onRestoreInstanceState(savedInstanceState);
         serviceBound = savedInstanceState.getBoolean("serviceStatus");
     }
-
-    private ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            MediaPlayerService.LocalBinder binder = (MediaPlayerService.LocalBinder) service;
-            player = binder.getService();
-            serviceBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            serviceBound = false;
-        }
-    };
-
 
     private void playAudio(int audioIndex) {
         if (!serviceBound) {
@@ -284,4 +278,10 @@ public class MainActivity extends AppCompatActivity {
             player.stopSelf();
         }
     }
+
+    public void startSettings(MenuItem item) {
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
+    }
+
 }
