@@ -4,8 +4,8 @@
     tools:context="com.example.nikita.deathcoreplayer.MainActivity">
     <item
         android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="Settings"
         android:onClick="startSettings"
+        android:orderInCategory="100"
+        android:title="@string/settings"
         app:showAsAction="never" />
 </menu>
