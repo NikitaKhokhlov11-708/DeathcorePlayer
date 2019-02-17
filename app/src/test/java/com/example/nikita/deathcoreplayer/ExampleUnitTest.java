@@ -1,4 +1,4 @@
-package com.example.nikita.androidhomework;
+package com.example.nikita.deathcoreplayer;
 
 import org.junit.Test;
 

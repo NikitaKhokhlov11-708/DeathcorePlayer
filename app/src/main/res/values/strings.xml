@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">AndroidHomework</string>
+    <string name="app_name">DeathcorePlayer</string>
+    <string name="settings">Settings</string>
 </resources>
