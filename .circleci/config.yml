@@ -23,9 +23,9 @@ references:
 
   persist_release_workspace: &persist_release_workspace
     persist_to_workspace:
-      root: *workspace
+      root: .
       paths:
-        - app/build
+        - .
 
   android_config: &android_config
     working_directory: *workspace
