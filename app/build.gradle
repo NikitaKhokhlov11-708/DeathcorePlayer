@@ -1,6 +1,23 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
+detekt {
+    version = "1.0.0-RC12"
+    input = files("${project.rootDir}/${project.getName()}/src/main/java")
+    config = files("${project.rootDir}/detekt/detekt-config.yml")
+    filters = ".*test.*,.*/resources/.*,.*/tmp/.*"
+    reports {
+        xml {
+            enabled = true
+            destination = file("build/reports/detekt.xml")
+        }
+        html {
+            enabled = true
+            destination = file("build/reports/detekt.html")
+        }
+    }
+}
+
 android {
     compileSdkVersion 28
     defaultConfig {
@@ -18,7 +35,6 @@ android {
         }
     }
 }
-
 dependencies {
     implementation 'com.android.support:support-media-compat:28.0.0'
     implementation 'com.android.support:design:28.0.0'
@@ -36,3 +52,6 @@ dependencies {
 repositories {
     mavenCentral()
 }
+
+
+
